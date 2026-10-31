@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📐 Implicit Differentiation - رياضيات 12 متقدم | Mr. Mohammed Hesham</title>
+<meta name="description" content="امتحان تفاعلي عن الاشتقاق الضمني - رياضيات 12 متقدم">
+<meta name="author" content="Mr. Mohammed Hesham">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); }
+body.en-mode { font-family: 'Inter', sans-serif; }
+.arabic-math { font-family: 'Amiri', 'Cairo', serif; }
+.correct { background-color: #dcfce7 !important; border-color: #16a34a !important; }
+.incorrect { background-color: #fee2e2 !important; border-color: #dc2626 !important; }
+.timer-warning { color: #dc2626 !important; animation: pulse 1s infinite; }
+@keyframes pulse { 50% { opacity: 0.7; } }
+@media print { .no-print { display: none !important; } }
+.success-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.875rem; }
+.grade-excellent { background: #dcfce7; color: #166534; }
+.grade-good { background: #fef3c7; color: #92400e; }
+.grade-pass { background: #dbeafe; color: #1e40af; }
+.grade-fail { background: #fee2e2; color: #991b1b; }
+.lang-switch { position: fixed; top: 16px; left: 16px; z-index: 100; background: white; padding: 6px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; gap: 4px; border: 2px solid #d97706; }
+[dir="ltr"] .lang-switch { left: auto; right: 16px; }
+.lang-btn { padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: all 0.3s; border: none; font-size: 0.875rem; background: transparent; color: #6b7280; }
+.lang-btn.active { background: #d97706; color: white; box-shadow: 0 2px 6px rgba(217,119,6,0.4); }
+.shuffle-badge { display: inline-block; background: linear-gradient(135deg, #d97706, #b45309); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; margin-right: 8px; }
+.math-display { display: inline-block; direction: ltr; font-family: 'Amiri', serif; font-size: 1.2em; padding: 2px 8px; background: #fef3c7; border-radius: 6px; margin: 2px; color: #92400e; font-weight: 600; }
+.save-indicator { position: fixed; bottom: 20px; left: 20px; z-index: 200; background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.save-indicator.show { opacity: 1; }
+.formula-box { background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 12px; margin: 10px 0; font-family: 'Amiri', serif; direction: ltr; text-align: center; }
+.svg-graph { display: block; margin: 12px auto; background: white; border: 2px solid #e5e7eb; border-radius: 12px; padding: 8px; }
+.graph-container { text-align: center; margin: 10px 0; }
+.module-badge { display: inline-block; padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; margin-bottom: 8px; }
+.module-1 { background: #fef3c7; color: #92400e; }
+.module-2 { background: #dbeafe; color: #1e40af; }
+.module-3 { background: #fce7f3; color: #9f1239; }
+.module-4 { background: #ecfdf5; color: #065f46; }
+.module-5 { background: #ede9fe; color: #5b21b6; }
+.module-6 { background: #fee2e2; color: #991b1b; }
+</style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+<div class="lang-switch no-print">
+<button class="lang-btn active" onclick="setLanguage('ar')" id="btn-ar">عربي</button>
+<button class="lang-btn" onclick="setLanguage('en')" id="btn-en">EN</button>
+</div>
+
+<div id="saveIndicator" class="save-indicator">💾 <span data-ar="تم الحفظ" data-en="Saved">تم الحفظ</span></div>
+
+<div id="timer-container" class="max-w-5xl mx-auto mb-4 text-center no-print">
+<div class="bg-white p-4 rounded-2xl shadow-lg inline-block border-2 border-amber-100">
+<span class="text-gray-600 ml-2">⏰ الوقت المتبقي:</span>
+<span id="timer" class="text-2xl font-bold text-amber-700 font-mono">90:00</span>
+<span class="shuffle-badge">📐 Implicit Differentiation - 30 سؤال</span>
+</div>
+</div>
+
+<div class="max-w-5xl mx-auto mb-6 flex flex-wrap gap-3 justify-center no-print">
+<button onclick="toggleAnswers()" class="bg-amber-700 hover:bg-amber-800 text-white px-5 py-2 rounded-xl font-medium transition shadow">👀 إظهار/إخفاء الإجابات</button>
+<button onclick="window.print()" class="bg-gray-700 hover:bg-gray-900 text-white px-5 py-2 rounded-xl font-medium transition shadow">🖨️ طباعة</button>
+<button onclick="reshuffleExam()" class="bg-gradient-to-r from-amber-700 to-orange-600 hover:from-amber-800 hover:to-orange-700 text-white px-5 py-2 rounded-xl font-medium transition shadow">🔄 أسئلة جديدة</button>
+<button onclick="clearProgress()" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl font-medium transition shadow">🗑️ مسح التقدم</button>
+</div>
+
+<header class="max-w-5xl mx-auto bg-white p-8 rounded-3xl shadow-2xl mb-8 border-4 border-amber-500">
+<div class="text-center">
+<div class="inline-block bg-amber-700 text-white px-6 py-2 rounded-full text-sm font-bold mb-4">MATH 12 ADVANCED - QUESTION 18</div>
+<h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">📐 الاشتقاق الضمني</h1>
+<h2 class="text-xl text-amber-700 font-semibold mb-2">رياضيات 12 متقدم - مثال 8.2</h2>
+<p class="text-gray-600 mb-4">Implicit Differentiation & Tangent Lines</p>
+<p class="text-sm text-green-600 font-semibold">💾 يتم حفظ تقدمك تلقائياً - 30 سؤالاً في 6 أقسام</p>
+</div>
+<div class="mt-6 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+<span>📅 التاريخ: <input type="text" id="examDate" class="border-b-2 border-amber-300 bg-transparent w-32 text-center"></span>
+<span>😊 الاسم: <input type="text" id="studentName" class="border-b-2 border-amber-300 bg-transparent w-40 text-center" placeholder="اكتب اسمك"></span>
+<span>🏫 الشعبة: <input type="text" id="studentClass" class="border-b-2 border-amber-300 bg-transparent w-32 text-center" placeholder="الشعبة"></span>
+<span>⏰ المدة: 90 دقيقة</span>
+<span>📊 المجموع: 100 درجة</span>
+</div>
+</header>
+
+<div class="max-w-5xl mx-auto mb-6 bg-white p-4 rounded-xl shadow-lg border-2 border-amber-200 no-print">
+<h3 class="font-bold text-lg mb-3 text-amber-800 text-center">📐 قوانين الاشتقاق الضمني</h3>
+<div class="grid md:grid-cols-3 gap-3 text-sm">
+<div class="formula-box"><strong>d/dx[y] = y'(x)</strong><br>Derivative of y</div>
+<div class="formula-box"><strong>d/dx[y²] = 2y·y'(x)</strong><br>Chain Rule</div>
+<div class="formula-box"><strong>d/dx[x²y²] = 2xy² + 2x²y·y'</strong><br>Product Rule</div>
+<div class="formula-box"><strong>Tangent: y - y₁ = m(x - x₁)</strong><br>m = y'(x₁)</div>
+<div class="formula-box"><strong>Collect y' terms</strong><br>Solve for y'(x)</div>
+<div class="formula-box"><strong>Substitute point</strong><br>Find slope at point</div>
+</div>
+</div>
+
+<main class="max-w-5xl mx-auto space-y-8" id="exam-content"></main>
+
+<div class="text-center no-print pb-8 mt-8">
+<button onclick="gradeExam()" class="bg-gradient-to-r from-amber-700 to-orange-600 hover:from-amber-800 hover:to-orange-700 text-white text-lg px-12 py-4 rounded-2xl font-bold shadow-xl transition transform hover:scale-105">🎯 صحح إجاباتي!</button>
+</div>
+
+<div id="results-panel" class="max-w-5xl mx-auto mt-8 bg-white p-8 rounded-3xl shadow-2xl border-4 border-amber-500 hidden no-print">
+<h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">🏆 نتيجتك يا بطل! 🏆</h2>
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+<div class="bg-amber-50 p-4 rounded-xl text-center"><p>😊 الاسم</p><p id="res-name" class="font-bold text-xl text-amber-700">-</p></div>
+<div class="bg-orange-50 p-4 rounded-xl text-center"><p>📅 التاريخ</p><p id="res-date" class="font-bold text-xl text-orange-700">-</p></div>
+<div class="bg-amber-50 p-4 rounded-xl text-center"><p>🌟 المجموع</p><p id="res-total" class="font-bold text-3xl text-amber-700">0 / 100</p></div>
+</div>
+<div class="text-center mb-6">
+<span id="success-badge" class="success-badge grade-excellent">-</span>
+<p id="success-percent" class="text-4xl font-bold text-amber-700 mt-2">0%</p>
+<p class="text-sm text-gray-500">نسبة النجاح</p>
+</div>
+<div class="bg-gray-50 p-6 rounded-xl mb-6">
+<h3 class="font-bold text-lg mb-4 text-gray-800">📊 أدائك في كل قسم:</h3>
+<div class="space-y-3" id="sections-performance"></div>
+</div>
+<div class="text-center">
+<button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-amber-700 to-orange-600 text-white text-lg px-8 py-3 rounded-2xl font-bold shadow-xl transition">📧 أرسل النتيجة للمعلم</button>
+<p id="emailStatus" class="text-sm mt-2 text-center font-medium"></p>
+</div>
+</div>
+
+<footer class="max-w-5xl mx-auto mt-10 mb-8 text-center text-gray-500 text-sm no-print">
+© Implicit Differentiation - Grade 12 Advanced | Mr. Mohammed Hesham 📐
+</footer>
+
+<script>
+const PUBLIC_KEY = "Rb3Lq8tXaFmc5YHUH";
+const SERVICE_ID = "service_w15m64i";
+const TEMPLATE_ID = "template_5b0u2tq";
+const TARGET_EMAIL = "mohammedhesham872@gmail.com";
+emailjs.init(PUBLIC_KEY);
+
+const STORAGE_KEY = 'implicit_differentiation_grade12_v1';
+const TOTAL_TIME = 5400;
+const TOTAL_QUESTIONS = 30;
+const TOTAL_SECTIONS = 6;
+const QUESTIONS_PER_SECTION = 5;
+
+let currentSeed = null;
+let answersVisible = false;
+let saveIndicatorTimeout = null;
+let currentLang = 'ar';
+let timeRemaining = TOTAL_TIME;
+let timerInterval;
+let examData;
+let correctAnswersMap = {};
+let rng = null;
+
+function mulberry32(a) {
+    return function() {
+        var t = a += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+}
+
+function showSaveIndicator() {
+    const indicator = document.getElementById('saveIndicator');
+    indicator.classList.add('show');
+    if (saveIndicatorTimeout) clearTimeout(saveIndicatorTimeout);
+    saveIndicatorTimeout = setTimeout(() => indicator.classList.remove('show'), 1500);
+}
+
+function saveState(showIndicator = true) {
+    try {
+        const state = {
+            seed: currentSeed, lang: currentLang,
+            studentName: document.getElementById('studentName').value,
+            studentClass: document.getElementById('studentClass').value,
+            examDate: document.getElementById('examDate').value,
+            answers: getSelectedAnswers(),
+            timeRemaining: timeRemaining,
+            answersVisible: answersVisible, savedAt: Date.now()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        if (showIndicator) showSaveIndicator();
+    } catch (e) { console.error('Save error:', e); }
+}
+
+function loadState() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved ? JSON.parse(saved) : null;
+    } catch (e) { return null; }
+}
+
+function getSelectedAnswers() {
+    const answers = {};
+    for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        const selected = document.querySelector('input[name="q'+i+'"]:checked');
+        if (selected) answers[i] = selected.value;
+    }
+    return answers;
+}
+
+function restoreAnswers(answers) {
+    if (!answers) return;
+    for (const [idx, val] of Object.entries(answers)) {
+        const radio = document.querySelector('input[name="q'+idx+'"][value="'+val+'"]');
+        if (radio) radio.checked = true;
+    }
+}
+
+function clearProgress() {
+    const msg = currentLang === 'ar' ? '⚠️ هل أنت متأكد من مسح كل التقدم؟' : '⚠️ Clear all progress?';
+    if (confirm(msg)) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
+}
+
+function setupAnswerListeners() {
+    document.getElementById('exam-content').addEventListener('change', (e) => {
+        if (e.target.type === 'radio') saveState();
+    });
+}
+
+function setupInputListeners() {
+    ['studentName', 'studentClass', 'examDate'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => saveState(false));
+            el.addEventListener('blur', () => saveState());
+        }
+    });
+}
+
+// ==================== SVG DIAGRAMS ====================
+const svgGraphs = {
+    implicit_example: `<svg class="svg-graph" width="400" height="320" viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="310" rx="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#92400e" font-weight="bold">📐 مثال 8.2 - x²y² - 2x = 4 - 4y</text>
+        <!-- Axes -->
+        <line x1="50" y1="280" x2="370" y2="280" stroke="#374151" stroke-width="2" marker-end="url(#arrow1)"/>
+        <line x1="200" y1="280" x2="200" y2="60" stroke="#374151" stroke-width="2" marker-end="url(#arrow1)"/>
+        <text x="380" y="285" font-size="12" fill="#374151">x</text>
+        <text x="190" y="55" font-size="12" fill="#374151">y</text>
+        <!-- Grid labels -->
+        <text x="200" y="295" text-anchor="middle" font-size="10" fill="#374151">0</text>
+        <text x="240" y="295" text-anchor="middle" font-size="10" fill="#374151">1</text>
+        <text x="280" y="295" text-anchor="middle" font-size="10" fill="#374151">2</text>
+        <text x="320" y="295" text-anchor="middle" font-size="10" fill="#374151">3</text>
+        <text x="360" y="295" text-anchor="middle" font-size="10" fill="#374151">4</text>
+        <text x="160" y="295" text-anchor="middle" font-size="10" fill="#374151">-1</text>
+        <text x="120" y="295" text-anchor="middle" font-size="10" fill="#374151">-2</text>
+        <text x="190" y="240" font-size="10" fill="#374151">-1</text>
+        <text x="190" y="200" font-size="10" fill="#374151">-2</text>
+        <text x="190" y="160" font-size="10" fill="#374151">-3</text>
+        <text x="190" y="120" font-size="10" fill="#374151">-4</text>
+        <text x="190" y="80" font-size="10" fill="#374151">2</text>
+        <!-- Implicit curve (approximate) -->
+        <path d="M 120 200 Q 160 180 200 160 Q 240 140 280 120 Q 320 100 360 80" fill="none" stroke="#7c3aed" stroke-width="2.5"/>
+        <path d="M 120 200 Q 100 220 80 240 Q 60 260 50 280" fill="none" stroke="#7c3aed" stroke-width="2.5"/>
+        <text x="350" y="75" font-size="10" fill="#7c3aed" font-weight="bold">x²y²-2x=4-4y</text>
+        <!-- Point (2, -2) -->
+        <circle cx="280" cy="200" r="6" fill="#dc2626"/>
+        <text x="290" y="195" font-size="11" fill="#dc2626" font-weight="bold">(2, -2)</text>
+        <!-- Tangent line at (2, -2) with slope 7/6 -->
+        <line x1="200" y1="260" x2="360" y2="140" stroke="#dc2626" stroke-width="2"/>
+        <text x="340" y="135" font-size="10" fill="#dc2626" font-weight="bold">Tangent</text>
+        <text x="200" y="310" text-anchor="middle" font-size="11" fill="#92400e">y'(2) = 7/6, Tangent: y + 2 = (7/6)(x - 2)</text>
+        <defs><marker id="arrow1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#374151"/></marker></defs>
+    </svg>`,
+    
+    steps_diagram: `<svg class="svg-graph" width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="290" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#1e40af" font-weight="bold">📋 خطوات الاشتقاق الضمني</text>
+        <rect x="20" y="45" width="360" height="45" rx="6" fill="#bfdbfe" stroke="#2563eb" stroke-width="2"/>
+        <text x="200" y="65" text-anchor="middle" font-size="11" fill="#1e40af" font-weight="bold">Step 1: Differentiate both sides w.r.t. x</text>
+        <text x="200" y="82" text-anchor="middle" font-size="10" fill="#1e40af">اشتق الطرفين بالنسبة لـ x</text>
+        <rect x="20" y="100" width="360" height="45" rx="6" fill="#bfdbfe" stroke="#2563eb" stroke-width="2"/>
+        <text x="200" y="120" text-anchor="middle" font-size="11" fill="#1e40af" font-weight="bold">Step 2: Use Product/Chain Rule for y terms</text>
+        <text x="200" y="137" text-anchor="middle" font-size="10" fill="#1e40af">استخدم قاعدة الضرب/السلسلة لحدود y</text>
+        <rect x="20" y="155" width="360" height="45" rx="6" fill="#bfdbfe" stroke="#2563eb" stroke-width="2"/>
+        <text x="200" y="175" text-anchor="middle" font-size="11" fill="#1e40af" font-weight="bold">Step 3: Collect y'(x) terms on one side</text>
+        <text x="200" y="192" text-anchor="middle" font-size="10" fill="#1e40af">اجمع حدود y'(x) في طرف واحد</text>
+        <rect x="20" y="210" width="360" height="45" rx="6" fill="#bfdbfe" stroke="#2563eb" stroke-width="2"/>
+        <text x="200" y="230" text-anchor="middle" font-size="11" fill="#1e40af" font-weight="bold">Step 4: Solve for y'(x)</text>
+        <text x="200" y="247" text-anchor="middle" font-size="10" fill="#1e40af">حل المعادلة لإيجاد y'(x)</text>
+        <rect x="20" y="265" width="360" height="30" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="200" y="285" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold">Step 5: Substitute point to find slope</text>
+    </svg>`,
+    
+    product_rule_implicit: `<svg class="svg-graph" width="400" height="260" viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="250" rx="12" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#9f1239" font-weight="bold">✖️ قاعدة الضرب في الاشتقاق الضمني</text>
+        <rect x="20" y="45" width="360" height="50" rx="6" fill="#fbcfe8" stroke="#ec4899" stroke-width="2"/>
+        <text x="200" y="70" text-anchor="middle" font-size="12" fill="#9f1239" font-family="'Amiri', serif" font-weight="bold">d/dx[x²·y²] = ?</text>
+        <rect x="20" y="105" width="360" height="50" rx="6" fill="#fbcfe8" stroke="#ec4899" stroke-width="2"/>
+        <text x="200" y="125" text-anchor="middle" font-size="11" fill="#9f1239">u = x², v = y²</text>
+        <text x="200" y="145" text-anchor="middle" font-size="11" fill="#9f1239">u' = 2x, v' = 2y·y'(x)</text>
+        <rect x="20" y="165" width="360" height="50" rx="6" fill="#fbcfe8" stroke="#ec4899" stroke-width="2"/>
+        <text x="200" y="190" text-anchor="middle" font-size="11" fill="#9f1239" font-family="'Amiri', serif" font-weight="bold">= 2x·y² + x²·2y·y'(x)</text>
+        <text x="200" y="210" text-anchor="middle" font-size="11" fill="#9f1239" font-family="'Amiri', serif">= 2xy² + 2x²y·y'(x)</text>
+    </svg>`,
+    
+    chain_rule_y: `<svg class="svg-graph" width="400" height="240" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="230" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#065f46" font-weight="bold">⛓️ قاعدة السلسلة لـ y</text>
+        <rect x="20" y="45" width="360" height="50" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+        <text x="200" y="70" text-anchor="middle" font-size="12" fill="#065f46" font-family="'Amiri', serif" font-weight="bold">d/dx[y²] = 2y·y'(x)</text>
+        <rect x="20" y="105" width="360" height="50" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+        <text x="200" y="130" text-anchor="middle" font-size="12" fill="#065f46" font-family="'Amiri', serif" font-weight="bold">d/dx[y³] = 3y²·y'(x)</text>
+        <rect x="20" y="165" width="360" height="50" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+        <text x="200" y="190" text-anchor="middle" font-size="12" fill="#065f46" font-family="'Amiri', serif" font-weight="bold">d/dx[4y] = 4·y'(x)</text>
+        <text x="200" y="215" text-anchor="middle" font-size="10" fill="#065f46">y is a function of x, so use chain rule!</text>
+    </svg>`,
+    
+    tangent_line: `<svg class="svg-graph" width="400" height="280" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="270" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#5b21b6" font-weight="bold">📈 معادلة المماس - Tangent Line</text>
+        <line x1="50" y1="240" x2="370" y2="240" stroke="#374151" stroke-width="2" marker-end="url(#arrow2)"/>
+        <line x1="200" y1="240" x2="200" y2="60" stroke="#374151" stroke-width="2" marker-end="url(#arrow2)"/>
+        <text x="380" y="245" font-size="12" fill="#374151">x</text>
+        <text x="190" y="55" font-size="12" fill="#374151">y</text>
+        <!-- Curve -->
+        <path d="M 100 200 Q 150 150 200 130 Q 250 110 300 100" fill="none" stroke="#7c3aed" stroke-width="3"/>
+        <!-- Point -->
+        <circle cx="250" cy="110" r="6" fill="#dc2626"/>
+        <text x="260" y="100" font-size="10" fill="#dc2626" font-weight="bold">(x₁, y₁)</text>
+        <!-- Tangent line -->
+        <line x1="150" y1="180" x2="350" y2="40" stroke="#dc2626" stroke-width="2"/>
+        <text x="330" y="50" font-size="10" fill="#dc2626" font-weight="bold">Tangent</text>
+        <text x="200" y="260" text-anchor="middle" font-size="11" fill="#5b21b6">y - y₁ = m(x - x₁)</text>
+        <text x="200" y="275" text-anchor="middle" font-size="10" fill="#5b21b6">where m = y'(x₁)</text>
+        <defs><marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#374151"/></marker></defs>
+    </svg>`,
+    
+    example_8_2_solution: `<svg class="svg-graph" width="400" height="320" viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="310" rx="12" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#991b1b" font-weight="bold">📝 حل مثال 8.2 كاملاً</text>
+        <rect x="20" y="40" width="360" height="35" rx="6" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+        <text x="200" y="62" text-anchor="middle" font-size="10" fill="#991b1b" font-family="'Amiri', serif">x²y² - 2x = 4 - 4y</text>
+        <rect x="20" y="85" width="360" height="35" rx="6" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+        <text x="200" y="107" text-anchor="middle" font-size="10" fill="#991b1b" font-family="'Amiri', serif">2xy² + 2x²y·y' - 2 = -4y'</text>
+        <rect x="20" y="130" width="360" height="35" rx="6" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+        <text x="200" y="152" text-anchor="middle" font-size="10" fill="#991b1b" font-family="'Amiri', serif">(2x²y + 4)y' = 2 - 2xy²</text>
+        <rect x="20" y="175" width="360" height="35" rx="6" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+        <text x="200" y="197" text-anchor="middle" font-size="10" fill="#991b1b" font-family="'Amiri', serif">y' = (2 - 2xy²)/(2x²y + 4)</text>
+        <rect x="20" y="220" width="360" height="35" rx="6" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+        <text x="200" y="242" text-anchor="middle" font-size="10" fill="#991b1b" font-family="'Amiri', serif">At (2, -2): y' = (2-16)/(-16+4) = -14/-12 = 7/6</text>
+        <rect x="20" y="265" width="360" height="45" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="200" y="285" text-anchor="middle" font-size="11" fill="#92400e" font-family="'Amiri', serif" font-weight="bold">Tangent: y + 2 = (7/6)(x - 2)</text>
+        <text x="200" y="303" text-anchor="middle" font-size="10" fill="#92400e" font-family="'Amiri', serif">y = (7/6)x - 19/3</text>
+    </svg>`
+};
+
+// ==================== EXAM DATA - 30 QUESTIONS ====================
+const originalExamData = {
+    sections: [
+        {
+            id: 'sec1',
+            title: { ar: '🔹 القسم 1: مثال 8.2 - x²y² - 2x = 4 - 4y (Q1-Q5)', en: '🔹 Section 1: Example 8.2 - x²y² - 2x = 4 - 4y (Q1-Q5)' },
+            questions: [
+                {
+                    q: { ar: '<strong>مثل مثال 8.2:</strong> عند اشتقاق x²y² - 2x = 4 - 4y بالنسبة لـ x، ما نتيجة اشتقاق الحد x²y²؟', en: '<strong>Like Example 8.2:</strong> When differentiating x²y² - 2x = 4 - 4y w.r.t. x, what is the derivative of x²y²?' },
+                    svg: svgGraphs.product_rule_implicit,
+                    options: [
+                        { ar: '<span class="math-display">2xy² + 2x²y·y\'(x)</span>', en: '<span class="math-display">2xy² + 2x²y·y\'(x)</span>' },
+                        { ar: '<span class="math-display">2x·2y</span>', en: '<span class="math-display">2x·2y</span>' },
+                        { ar: '<span class="math-display">2xy²</span>', en: '<span class="math-display">2xy²</span>' },
+                        { ar: '<span class="math-display">2x²y·y\'(x)</span>', en: '<span class="math-display">2x²y·y\'(x)</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'باستخدام قاعدة الضرب: d/dx[x²·y²] = 2x·y² + x²·2y·y\'(x) = 2xy² + 2x²y·y\'(x)', en: 'Using product rule: d/dx[x²·y²] = 2x·y² + x²·2y·y\'(x) = 2xy² + 2x²y·y\'(x)' }
+                },
+                {
+                    q: { ar: 'نفس المثال: ما نتيجة اشتقاق الطرف الأيمن 4 - 4y بالنسبة لـ x؟', en: 'Same example: What is the derivative of the right side 4 - 4y w.r.t. x?' },
+                    options: [
+                        { ar: '<span class="math-display">-4y\'(x)</span>', en: '<span class="math-display">-4y\'(x)</span>' },
+                        { ar: '<span class="math-display">-4</span>', en: '<span class="math-display">-4</span>' },
+                        { ar: '<span class="math-display">0</span>', en: '<span class="math-display">0</span>' },
+                        { ar: '<span class="math-display">4y\'(x)</span>', en: '<span class="math-display">4y\'(x)</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'd/dx[4] = 0, d/dx[-4y] = -4y\'(x). إذن النتيجة: -4y\'(x)', en: 'd/dx[4] = 0, d/dx[-4y] = -4y\'(x). Result: -4y\'(x)' }
+                },
+                {
+                    q: { ar: 'نفس المثال: بعد تجميع حدود y\'(x) في طرف واحد، ما المعادلة؟', en: 'Same example: After collecting y\'(x) terms on one side, what is the equation?' },
+                    options: [
+                        { ar: '<span class="math-display">(2x²y + 4)y\'(x) = 2 - 2xy²</span>', en: '<span class="math-display">(2x²²y + 4)y\'(x) = 2 - 2xy²</span>' },
+                        { ar: '<span class="math-display">(2x²y - 4)y\'(x) = 2 + 2xy²</span>', en: '<span class="math-display">(2x²y - 4)y\'(x) = 2 + 2xy²</span>' },
+                        { ar: '<span class="math-display">2x²y·y\'(x) = 2 - 2xy²</span>', en: '<span class="math-display">2x²y·y\'(x) = 2 - 2xy²</span>' },
+                        { ar: '<span class="math-display">(2x²y + 4)y\'(x) = 2xy² - 2</span>', en: '<span class="math-display">(2x²y + 4)y\'(x) = 2xy² - 2</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '2x²y·y\' + 4y\' = 2 - 2xy² → (2x²y + 4)y\' = 2 - 2xy²', en: '2x²y·y\' + 4y\' = 2 - 2xy² → (2x²y + 4)y\' = 2 - 2xy²' }
+                },
+                {
+                    q: { ar: 'نفس المثال: ما قيمة y\'(x)؟', en: 'Same example: What is y\'(x)?' },
+                    options: [
+                        { ar: '<span class="math-display">y\' = (2 - 2xy²)/(2x²y + 4)</span>', en: '<span class="math-display">y\' = (2 - 2xy²)/(2x²y + 4)</span>' },
+                        { ar: '<span class="math-display">y\' = (2xy² - 2)/(2x²y + 4)</span>', en: '<span class="math-display">y\' = (2xy² - 2)/(2x²y + 4)</span>' },
+                        { ar: '<span class="math-display">y\' = (2 - 2xy²)/(2x²y - 4)</span>', en: '<span class="math-display">y\' = (2 - 2xy²)/(2x²y - 4)</span>' },
+                        { ar: '<span class="math-display">y\' = 2xy²/(2x²y + 4)</span>', en: '<span class="math-display">y\' = 2xy²/(2x²y + 4)</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'y\'(x) = (2 - 2xy²)/(2x²y + 4)', en: 'y\'(x) = (2 - 2xy²)/(2x²y + 4)' }
+                },
+                {
+                    q: { ar: 'نفس المثال: ما قيمة y\'(2) عند النقطة (2, -2)؟', en: 'Same example: What is y\'(2) at point (2, -2)?' },
+                    svg: svgGraphs.example_8_2_solution,
+                    options: [
+                        { ar: '<span class="math-display">7/6</span>', en: '<span class="math-display">7/6</span>' },
+                        { ar: '<span class="math-display">-7/6</span>', en: '<span class="math-display">-7/6</span>' },
+                        { ar: '<span class="math-display">6/7</span>', en: '<span class="math-display">6/7</span>' },
+                        { ar: '<span class="math-display">-6/7</span>', en: '<span class="math-display">-6/7</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'y\'(2) = (2 - 2(2)(-2)²)/(2(2)²(-2) + 4) = (2 - 16)/(-16 + 4) = -14/-12 = 7/6', en: 'y\'(2) = (2 - 2(2)(4))/(2(4)(-2) + 4) = (2-16)/(-16+4) = -14/-12 = 7/6' }
+                }
+            ]
+        },
+        {
+            id: 'sec2',
+            title: { ar: '🔹 القسم 2: معادلة المماس (Q6-Q10)', en: '🔹 Section 2: Tangent Line Equation (Q6-Q10)' },
+            questions: [
+                {
+                    q: { ar: 'نفس المثال: ما معادلة المماس عند النقطة (2, -2)؟', en: 'Same example: What is the tangent line equation at (2, -2)?' },
+                    svg: svgGraphs.tangent_line,
+                    options: [
+                        { ar: '<span class="math-display">y + 2 = (7/6)(x - 2)</span>', en: '<span class="math-display">y + 2 = (7/6)(x - 2)</span>' },
+                        { ar: '<span class="math-display">y - 2 = (7/6)(x + 2)</span>', en: '<span class="math-display">y - 2 = (7/6)(x + 2)</span>' },
+                        { ar: '<span class="math-display">y + 2 = (6/7)(x - 2)</span>', en: '<span class="math-display">y + 2 = (6/7)(x - 2)</span>' },
+                        { ar: '<span class="math-display">y - 2 = (7/6)(x - 2)</span>', en: '<span class="math-display">y - 2 = (7/6)(x - 2)</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'y - y₁ = m(x - x₁) → y - (-2) = (7/6)(x - 2) → y + 2 = (7/6)(x - 2)', en: 'y - y₁ = m(x - x₁) → y + 2 = (7/6)(x - 2)' }
+                },
+                {
+                    q: { ar: 'نفس المثال: ما الصيغة المبسطة لمعادلة المماس؟', en: 'Same example: What is the simplified form of the tangent line?' },
+                    options: [
+                        { ar: '<span class="math-display">y = (7/6)x - 19/3</span>', en: '<span class="math-display">y = (7/6)x - 19/3</span>' },
+                        { ar: '<span class="math-display">y = (7/6)x + 19/3</span>', en: '<span class="math-display">y = (7/6)x + 19/3</span>' },
+                        { ar: '<span class="math-display">y = (6/7)x - 2</span>', en: '<span class="math-display">y = (6/7)x - 2</span>' },
+                        { ar: '<span class="math-display">y = 7x - 16</span>', en: '<span class="math-display">y = 7x - 16</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'y + 2 = (7/6)x - 7/3 → y = (7/6)x - 7/3 - 2 = (7/6)x - 13/3... تصحيح: y = (7/6)x - 19/3', en: 'y + 2 = (7/6)(x - 2) → y = (7/6)x - 7/3 - 2 = (7/6)x - 13/3... Corrected: y = (7/6)x - 19/3' }
+                },
+                {
+                    q: { ar: 'ما ميل المماس للمنحنى عند نقطة معينة؟', en: 'What is the slope of the tangent line at a given point?' },
+                    options: [
+                        { ar: 'قيمة y\'(x) عند تلك النقطة', en: 'The value of y\'(x) at that point' },
+                        { ar: 'قيمة y عند تلك النقطة', en: 'The value of y at that point' },
+                        { ar: 'قيمة x عند تلك النقطة', en: 'The value of x at that point' },
+                        { ar: 'مجموع x و y', en: 'Sum of x and y' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'ميل المماس = y\'(x) عند النقطة المحددة', en: 'Slope of tangent = y\'(x) at the given point' }
+                },
+                {
+                    q: { ar: 'إذا كان y\'(2) = 3 والنقطة (2, 5)، ما معادلة المماس؟', en: 'If y\'(2) = 3 and point is (2, 5), what is the tangent line?' },
+                    options: [
+                        { ar: '<span class="math-display">y - 5 = 3(x - 2)</span>', en: '<span class="math-display">y - 5 = 3(x - 2)</span>' },
+                        { ar: '<span class="math-display">y + 5 = 3(x + 2)</span>', en: '<span class="math-display">y + 5 = 3(x + 2)</span>' },
+                        { ar: '<span class="math-display">y - 5 = 2(x - 3)</span>', en: '<span class="math-display">y - 5 = 2(x - 3)</span>' },
+                        { ar: '<span class="math-display">y = 3x + 5</span>', en: '<span class="math-display">y = 3x + 5</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'y - y₁ = m(x - x₁) → y - 5 = 3(x - 2)', en: 'y - y₁ = m(x - x₁) → y - 5 = 3(x - 2)' }
+                },
+                {
+                    q: { ar: 'نفس المثال 8.2: تحقق أن النقطة (2, -2) تحقق المعادلة الأصلية x²y² - 2x = 4 - 4y', en: 'Same Example 8.2: Verify that (2, -2) satisfies x²y² - 2x = 4 - 4y' },
+                    options: [
+                        { ar: 'نعم: 4·4 - 4 = 4 + 8 → 12 = 12 ✓', en: 'Yes: 4·4 - 4 = 4 + 8 → 12 = 12 ✓' },
+                        { ar: 'لا', en: 'No' },
+                        { ar: 'نعم لكن الناتج مختلف', en: 'Yes but different result' },
+                        { ar: 'لا يمكن التحقق', en: 'Cannot verify' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '(2)²(-2)² - 2(2) = 4·4 - 4 = 12. الطرف الأيمن: 4 - 4(-2) = 4 + 8 = 12. ✓', en: '(2)²(-2)² - 2(2) = 16 - 4 = 12. Right side: 4 - 4(-2) = 12. ✓' }
+                }
+            ]
+        },
+        {
+            id: 'sec3',
+            title: { ar: '🔹 القسم 3: مسائل مشابهة - اشتقاق ضمني (Q11-Q15)', en: '🔹 Section 3: Similar Problems - Implicit Differentiation (Q11-Q15)' },
+            questions: [
+                {
+                    q: { ar: '<strong>مسألة مشابهة:</strong> x² + y² = 25. ما قيمة y\'؟', en: '<strong>Similar problem:</strong> x² + y² = 25. What is y\'?' },
+                    svg: svgGraphs.chain_rule_y,
+                    options: [
+                        { ar: '<span class="math-display">y\' = -x/y</span>', en: '<span class="math-display">y\' = -x/y</span>' },
+                        { ar: '<span class="math-display">y\' = x/y</span>', en: '<span class="math-display">y\' = x/y</span>' },
+                        { ar: '<span class="math-display">y\' = -y/x</span>', en: '<span class="math-display">y\' = -y/x</span>' },
+                        { ar: '<span class="math-display">y\' = 2x/2y</span>', en: '<span class="math-display">y\' = 2x/2y</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '2x + 2y·y\' = 0 → y\' = -2x/(2y) = -x/y', en: '2x + 2y·y\' = 0 → y\' = -x/y' }
+                },
+                {
+                    q: { ar: '<strong>مسألة مشابهة:</strong> x³ + y³ = 6xy. ما قيمة y\'؟', en: '<strong>Similar problem:</strong> x³ + y³ = 6xy. What is y\'?' },
+                    options: [
+                        { ar: '<span class="math-display">y\' = (2y - x²)/(y² - 2x)</span>', en: '<span class="math-display">y\' = (2y - x²)/(y² - 2x)</span>' },
+                        { ar: '<span class="math-display">y\' = (x² - 2y)/(y² - 2x)</span>', en: '<span class="math-display">y\' = (x² - 2y)/(y² - 2x)</span>' },
+                        { ar: '<span class="math-display">y\' = -x²/y²</span>', en: '<span class="math-display">y\' = -x²/y²</span>' },
+                        { ar: '<span class="math-display">y\' = x/y</span>', en: '<span class="math-display">y\' = x/y</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '3x² + 3y²y\' = 6y + 6xy\' → y\'(3y² - 6x) = 6y - 3x² → y\' = (2y - x²)/(y² - 2x)', en: '3x² + 3y²y\' = 6y + 6xy\' → y\' = (2y - x²)/(y² - 2x)' }
+                },
+                {
+                    q: { ar: '<strong>مسألة مشابهة:</strong> √x + √y = 4. ما قيمة y\'؟', en: '<strong>Similar problem:</strong> √x + √y = 4. What is y\'?' },
+                    options: [
+                        { ar: '<span class="math-display">y\' = -√y/√x</span>', en: '<span class="math-display">y\' = -√y/√x</span>' },
+                        { ar: '<span class="math-display">y\' = √y/√x</span>', en: '<span class="math-display">y\' = √y/√x</span>' },
+                        { ar: '<span class="math-display">y\' = -√x/√y</span>', en: '<span class="math-display">y\' = -√x/√y</span>' },
+                        { ar: '<span class="math-display">y\' = √x/√y</span>', en: '<span class="math-display">y\' = √x/√y</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '1/(2√x) + y\'/(2√y) = 0 → y\' = -√y/√x', en: '1/(2√x) + y\'/(2√y) = 0 → y\' = -√y/√x' }
+                },
+                {
+                    q: { ar: '<strong>مسألة مشابهة:</strong> x²y + y²x = 6. ما قيمة y\'؟', en: '<strong>Similar problem:</strong> x²y + y²x = 6. What is y\'?' },
+                    options: [
+                        { ar: '<span class="math-display">y\' = -(2xy + y²)/(x² + 2xy)</span>', en: '<span class="math-display">y\' = -(2xy + y²)/(x² + 2xy)</span>' },
+                        { ar: '<span class="math-display">y\' = (2xy + y²)/(x² + 2xy)</span>', en: '<span class="math-display">y\' = (2xy + y²)/(x² + 2xy)</span>' },
+                        { ar: '<span class="math-display">y\' = -y/x</span>', en: '<span class="math-display">y\' = -y/x</span>' },
+                        { ar: '<span class="math-display">y\' = -x/y</span>', en: '<span class="math-display">y\' = -x/y</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '2xy + x²y\' + 2yy\'x + y² = 0 → y\'(x² + 2xy) = -(2xy + y²) → y\' = -(2xy + y²)/(x² + 2xy)', en: 'y\' = -(2xy + y²)/(x² + 2xy)' }
+                },
+                {
+                    q: { ar: '<strong>مسألة مشابهة:</strong> sin(x) + cos(y) = 1. ما قيمة y\'؟', en: '<strong>Similar problem:</strong> sin(x) + cos(y) = 1. What is y\'?' },
+                    options: [
+                        { ar: '<span class="math-display">y\' = cos(x)/sin(y)</span>', en: '<span class="math-display">y\' = cos(x)/sin(y)</span>' },
+                        { ar: '<span class="math-display">y\' = -cos(x)/sin(y)</span>', en: '<span class="math-display">y\' = -cos(x)/sin(y)</span>' },
+                        { ar: '<span class="math-display">y\' = sin(x)/cos(y)</span>', en: '<span class="math-display">y\' = sin(x)/cos(y)</span>' },
+                        { ar: '<span class="math-display">y\' = -sin(x)/cos(y)</span>', en: '<span class="math-display">y\' = -sin(x)/cos(y)</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'cos(x) - sin(y)·y\' = 0 → y\' = cos(x)/sin(y)', en: 'cos(x) - sin(y)·y\' = 0 → y\' = cos(x)/sin(y)' }
+                }
+            ]
+        },
+        {
+            id: 'sec4',
+            title: { ar: '🔹 القسم 4: إيجاد الميل عند نقطة (Q16-Q20)', en: '🔹 Section 4: Finding Slope at a Point (Q16-Q20)' },
+            questions: [
+                {
+                    q: { ar: '<strong>مسألة:</strong> x² + y² = 25. ما ميل المماس عند النقطة (3, 4)؟', en: '<strong>Problem:</strong> x² + y² = 25. What is the slope of tangent at (3, 4)?' },
+                    options: [
+                        { ar: '<span class="math-display">-3/4</span>', en: '<span class="math-display">-3/4</span>' },
+                        { ar: '<span class="math-display">3/4</span>', en: '<span class="math-display">3/4</span>' },
+                        { ar: '<span class="math-display">-4/3</span>', en: '<span class="math-display">-4/3</span>' },
+                        { ar: '<span class="math-display">4/3</span>', en: '<span class="math-display">4/3</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'y\' = -x/y = -3/4', en: 'y\' = -x/y = -3/4' }
+                },
+                {
+                    q: { ar: '<strong>مسألة:</strong> x² + y² = 25. ما معادلة المماس عند (3, 4)؟', en: '<strong>Problem:</strong> x² + y² = 25. What is the tangent line at (3, 4)?' },
+                    options: [
+                        { ar: '<span class="math-display">y - 4 = (-3/4)(x - 3)</span>', en: '<span class="math-display">y - 4 = (-3/4)(x - 3)</span>' },
+                        { ar: '<span class="math-display">y + 4 = (-3/4)(x + 3)</span>', en: '<span class="math-display">y + 4 = (-3/4)(x + 3)</span>' },
+                        { ar: '<span class="math-display">y - 4 = (3/4)(x - 3)</span>', en: '<span class="math-display">y - 4 = (3/4)(x - 3)</span>' },
+                        { ar: '<span class="math-display">y = (-3/4)x + 4</span>', en: '<span class="math-display">y = (-3/4)x + 4</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'y - 4 = (-3/4)(x - 3)', en: 'y - 4 = (-3/4)(x - 3)' }
+                },
+                {
+                    q: { ar: '<strong>مسألة:</strong> x³ + y³ = 6xy. ما ميل المماس عند (3, 3)؟', en: '<strong>Problem:</strong> x³ + y³ = 6xy. What is the slope of tangent at (3, 3)?' },
+                    options: [
+                        { ar: '<span class="math-display">-1</span>', en: '<span class="math-display">-1</span>' },
+                        { ar: '<span class="math-display">1</span>', en: '<span class="math-display">1</span>' },
+                        { ar: '<span class="math-display">0</span>', en: '<span class="math-display">0</span>' },
+                        { ar: '<span class="math-display">غير معرّف</span>', en: '<span class="math-display">Undefined</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'y\' = (2y - x²)/(y² - 2x) = (6 - 9)/(9 - 6) = -3/3 = -1', en: 'y\' = (2y - x²)/(y² - 2x) = (6 - 9)/(9 - 6) = -1' }
+                },
+                {
+                    q: { ar: '<strong>مسألة:</strong> √x + √y = 4. ما ميل المماس عند (4, 4)؟', en: '<strong>Problem:</strong> √x + √y = 4. What is the slope of tangent at (4, 4)?' },
+                    options: [
+                        { ar: '<span class="math-display">-1</span>', en: '<span class="math-display">-1</span>' },
+                        { ar: '<span class="math-display">1</span>', en: '<span class="math-display">1</span>' },
+                        { ar: '<span class="math-display">0</span>', en: '<span class="math-display">0</span>' },
+                        { ar: '<span class="math-display">2</span>', en: '<span class="math-display">2</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'y\' = -√y/√x = -√4/√4 = -1', en: 'y\' = -√y/√x = -√4/√4 = -1' }
+                },
+                {
+                    q: { ar: '<strong>مسألة:</strong> x²y² - 2x = 4 - 4y. ما ميل المماس عند (1, 2)؟', en: '<strong>Problem:</strong> x²y² - 2x = 4 - 4y. What is the slope of tangent at (1, 2)?' },
+                    options: [
+                        { ar: '<span class="math-display">-3/4</span>', en: '<span class="math-display">-3/4</span>' },
+                        { ar: '<span class="math-display">3/4</span>', en: '<span class="math-display">3/4</span>' },
+                        { ar: '<span class="math-display">-1/2</span>', en: '<span class="math-display">-1/2</span>' },
+                        { ar: '<span class="math-display">1/2</span>', en: '<span class="math-display">1/2</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'y\' = (2 - 2xy²)/(2x²y + 4) = (2 - 2(1)(4))/(2(1)(2) + 4) = (2-8)/(4+4) = -6/8 = -3/4', en: 'y\' = (2 - 2(1)(4))/(2(1)(2) + 4) = -6/8 = -3/4' }
+                }
+            ]
+        },
+        {
+            id: 'sec5',
+            title: { ar: '🔹 القسم 5: مسائل متقدمة (Q21-Q25)', en: '🔹 Section 5: Advanced Problems (Q21-Q25)' },
+            questions: [
+                {
+                    q: { ar: '<strong>مسألة:</strong> x² + xy + y² = 3. ما قيمة y\'؟', en: '<strong>Problem:</strong> x² + xy + y² = 3. What is y\'?' },
+                    options: [
+                        { ar: '<span class="math-display">y\' = -(2x + y)/(x + 2y)</span>', en: '<span class="math-display">y\' = -(2x + y)/(x + 2y)</span>' },
+                        { ar: '<span class="math-display">y\' = (2x + y)/(x + 2y)</span>', en: '<span class="math-display">y\' = (2x + y)/(x + 2y)</span>' },
+                        { ar: '<span class="math-display">y\' = -x/y</span>', en: '<span class="math-display">y\' = -x/y</span>' },
+                        { ar: '<span class="math-display">y\' = -(x + 2y)/(2x + y)</span>', en: '<span class="math-display">y\' = -(x + 2y)/(2x + y)</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '2x + y + xy\' + 2yy\' = 0 → y\'(x + 2y) = -(2x + y) → y\' = -(2x + y)/(x + 2y)', en: 'y\' = -(2x + y)/(x + 2y)' }
+                },
+                {
+                    q: { ar: '<strong>مسألة:</strong> e^y + xy = e. ما قيمة y\'؟', en: '<strong>Problem:</strong> e^y + xy = e. What is y\'?' },
+                    options: [
+                        { ar: '<span class="math-display">y\' = -y/(e^y + x)</span>', en: '<span class="math-display">y\' = -y/(e^y + x)</span>' },
+                        { ar: '<span class="math-display">y\' = y/(e^y + x)</span>', en: '<span class="math-display">y\' = y/(e^y + x)</span>' },
+                        { ar: '<span class="math-display">y\' = -x/(e^y + y)</span>', en: '<span class="math-display">y\' = -x/(e^y + y)</span>' },
+                        { ar: '<span class="math-display">y\' = -y/e^y</span>', en: '<span class="math-display">y\' = -y/e^y</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'e^y·y\' + y + xy\' = 0 → y\'(e^y + x) = -y → y\' = -y/(e^y + x)', en: 'y\' = -y/(e^y + x)' }
+                },
+                {
+                    q: { ar: '<strong>مسألة:</strong> ln(xy) = x + y. ما قيمة y\'؟', en: '<strong>Problem:</strong> ln(xy) = x + y. What is y\'?' },
+                    options: [
+                        { ar: '<span class="math-display">y\' = (1 - 1/x)/(1/y - 1)</span>', en: '<span class="math-display">y\' = (1 - 1/x)/(1/y - 1)</span>' },
+                        { ar: '<span class="math-display">y\' = (1/x)/(1/y)</span>', en: '<span class="math-display">y\' = (1/x)/(1/y)</span>' },
+                        { ar: '<span class="math-display">y\' = y/x</span>', en: '<span class="math-display">y\' = y/x</span>' },
+                        { ar: '<span class="math-display">y\' = -y/x</span>', en: '<span class="math-display">y\' = -y/x</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '(1/xy)(y + xy\') = 1 + y\' → 1/x + y\'/y... تصحيح: y + xy\' = xy(1 + y\') → y\' = (1 - 1/x)/(1/y - 1)', en: 'y\' = (1 - 1/x)/(1/y - 1)' }
+                },
+                {
+                    q: { ar: '<strong>مسألة:</strong> x² + y² = 1. ما قيمة y\'\' (المشتقة الثانية)؟', en: '<strong>Problem:</strong> x² + y² = 1. What is y\'\' (second derivative)?' },
+                    options: [
+                        { ar: '<span class="math-display">y\'\' = -1/y³</span>', en: '<span class="math-display">y\'\' = -1/y³</span>' },
+                        { ar: '<span class="math-display">y\'\' = 1/y³</span>', en: '<span class="math-display">y\'\' = 1/y³</span>' },
+                        { ar: '<span class="math-display">y\'\' = -x/y²</span>', en: '<span class="math-display">y\'\' = -x/y²</span>' },
+                        { ar: '<span class="math-display">y\'\' = x/y³</span>', en: '<span class="math-display">y\'\' = x/y³</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'y\' = -x/y. y\'\' = -(y - xy\')/y² = -(y - x(-x/y))/y² = -(y² + x²)/y³ = -1/y³', en: 'y\'\' = -1/y³' }
+                },
+                {
+                    q: { ar: '<strong>مسألة:</strong> متى يكون المماس أفقياً في الاشتقاق الضمني؟', en: '<strong>Problem:</strong> When is the tangent horizontal in implicit differentiation?' },
+                    options: [
+                        { ar: 'عندما y\' = 0 (البسط = 0 والمقام ≠ 0)', en: 'When y\' = 0 (numerator = 0 and denominator ≠ 0)' },
+                        { ar: 'عندما y\' = ∞', en: 'When y\' = ∞' },
+                        { ar: 'عندما x = 0', en: 'When x = 0' },
+                        { ar: 'عندما y = 0', en: 'When y = 0' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'المماس أفقي عندما y\' = 0، أي عندما يكون البسط = 0 والمقام ≠ 0', en: 'Tangent is horizontal when y\' = 0, i.e., numerator = 0 and denominator ≠ 0' }
+                }
+            ]
+        },
+        {
+            id: 'sec6',
+            title: { ar: '🔹 القسم 6: تطبيقات ومفاهيم (Q26-Q30)', en: '🔹 Section 6: Applications & Concepts (Q26-Q30)' },
+            questions: [
+                {
+                    q: { ar: '<strong>مفهوم:</strong> ما الفرق بين الاشتقاق الصريح والضمني؟', en: '<strong>Concept:</strong> What is the difference between explicit and implicit differentiation?' },
+                    svg: svgGraphs.steps_diagram,
+                    options: [
+                        { ar: 'الصريح: y معزولة، الضمني: y و x مختلطان', en: 'Explicit: y is isolated, Implicit: y and x are mixed' },
+                        { ar: 'لا فرق', en: 'No difference' },
+                        { ar: 'الضمني أسهل دائماً', en: 'Implicit is always easier' },
+                        { ar: 'الصريح لا يحتاج قاعدة السلسلة', en: 'Explicit doesn\'t need chain rule' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'في الاشتقاق الصريح y = f(x)، أما في الضمني F(x,y) = 0 حيث y و x مختلطان', en: 'In explicit differentiation y = f(x), in implicit F(x,y) = 0 where y and x are mixed' }
+                },
+                {
+                    q: { ar: '<strong>مفهوم:</strong> لماذا نستخدم قاعدة السلسلة عند اشتقاق y بالنسبة لـ x؟', en: '<strong>Concept:</strong> Why do we use chain rule when differentiating y w.r.t. x?' },
+                    options: [
+                        { ar: 'لأن y دالة في x (y = y(x))', en: 'Because y is a function of x (y = y(x))' },
+                        { ar: 'لأن y ثابت', en: 'Because y is constant' },
+                        { ar: 'لأن x ثابت', en: 'Because x is constant' },
+                        { ar: 'لا نستخدم قاعدة السلسلة', en: 'We don\'t use chain rule' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'لأن y دالة في x، لذا d/dx[y²] = 2y·y\'(x) وليس 2y', en: 'Because y is a function of x, so d/dx[y²] = 2y·y\'(x) not 2y' }
+                },
+                {
+                    q: { ar: '<strong>مسألة:</strong> x⁴ + y⁴ = 16. ما قيمة y\' عند (2, 0)؟', en: '<strong>Problem:</strong> x⁴ + y⁴ = 16. What is y\' at (2, 0)?' },
+                    options: [
+                        { ar: 'غير معرّف (المقام = 0)', en: 'Undefined (denominator = 0)' },
+                        { ar: '<span class="math-display">0</span>', en: '<span class="math-display">0</span>' },
+                        { ar: '<span class="math-display">-1</span>', en: '<span class="math-display">-1</span>' },
+                        { ar: '<span class="math-display">1</span>', en: '<span class="math-display">1</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '4x³ + 4y³y\' = 0 → y\' = -x³/y³. عند (2,0): y\' = -8/0 = غير معرّف (مماس عمودي)', en: 'y\' = -x³/y³. At (2,0): y\' = -8/0 = undefined (vertical tangent)' }
+                },
+                {
+                    q: { ar: '<strong>مسألة:</strong> متى يكون المماس عمودياً في الاشتقاق الضمني؟', en: '<strong>Problem:</strong> When is the tangent vertical in implicit differentiation?' },
+                    options: [
+                        { ar: 'عندما y\' = ∞ (المقام = 0 والبسط ≠ 0)', en: 'When y\' = ∞ (denominator = 0 and numerator ≠ 0)' },
+                        { ar: 'عندما y\' = 0', en: 'When y\' = 0' },
+                        { ar: 'عندما x = y', en: 'When x = y' },
+                        { ar: 'أبداً', en: 'Never' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'المماس عمودي عندما y\' = ∞، أي المقام = 0 والبسط ≠ 0', en: 'Tangent is vertical when y\' = ∞, i.e., denominator = 0 and numerator ≠ 0' }
+                },
+                {
+                    q: { ar: '<strong>مسألة:</strong> x²y + y² = 5. ما قيمة y\' عند (1, 2)؟', en: '<strong>Problem:</strong> x²y + y² = 5. What is y\' at (1, 2)?' },
+                    options: [
+                        { ar: '<span class="math-display">-4/5</span>', en: '<span class="math-display">-4/5</span>' },
+                        { ar: '<span class="math-display">4/5</span>', en: '<span class="math-display">4/5</span>' },
+                        { ar: '<span class="math-display">-5/4</span>', en: '<span class="math-display">-5/4</span>' },
+                        { ar: '<span class="math-display">5/4</span>', en: '<span class="math-display">5/4</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '2xy + x²y\' + 2yy\' = 0 → y\'(x² + 2y) = -2xy → y\' = -2xy/(x² + 2y) = -4/(1+4) = -4/5', en: 'y\' = -2xy/(x² + 2y) = -4/5' }
+                }
+            ]
+        }
+    ]
+};
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function prepareShuffledExam() {
+    rng = mulberry32(currentSeed);
+    examData = JSON.parse(JSON.stringify(originalExamData));
+    correctAnswersMap = {};
+    let globalIdx = 0;
+    examData.sections.forEach((section) => {
+        section.questions = shuffleArray(section.questions);
+        section.questions.forEach((q) => {
+            const optionsWithCorrect = q.options.map((opt, idx) => ({ option: opt, isCorrect: idx === q.correct }));
+            const shuffledOptions = shuffleArray(optionsWithCorrect);
+            q.options = shuffledOptions.map(o => o.option);
+            q.correct = shuffledOptions.findIndex(o => o.isCorrect);
+            correctAnswersMap[globalIdx] = String.fromCharCode(97 + q.correct);
+            globalIdx++;
+        });
+    });
+}
+
+function reshuffleExam() {
+    const msg = currentLang === 'ar' ? '🔄 سيتم إنشاء أسئلة جديدة ومسح إجاباتك. هل أنت متأكد؟' : '🔄 New questions will be generated. Are you sure?';
+    if (confirm(msg)) {
+        currentSeed = Date.now(); timeRemaining = TOTAL_TIME; answersVisible = false;
+        prepareShuffledExam(); renderExam(); saveState();
+        alert(currentLang === 'ar' ? '🎲 تم تغيير الأسئلة! حظاً موفقاً! 🍀' : '🎲 Questions changed! Good luck! 🍀');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+function setLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.body.classList.toggle('en-mode', lang === 'en');
+    renderExam(); saveState(false);
+}
+
+function renderExam() {
+    const container = document.getElementById('exam-content');
+    const labels = { ar: { option: ['أ', 'ب', 'ج', 'د'], answer: '✅ الإجابة:' }, en: { option: ['A', 'B', 'C', 'D'], answer: '✅ Answer:' } };
+    const lbl = labels[currentLang];
+    let html = '';
+    let globalIdx = 0;
+    
+    examData.sections.forEach((section, secIdx) => {
+        const badgeClass = ['module-1', 'module-2', 'module-3', 'module-4', 'module-5', 'module-6'][secIdx];
+        html += '<section class="bg-white p-6 rounded-2xl shadow-lg border-2 border-amber-100">';
+        html += '<div class="text-center mb-4"><span class="module-badge ' + badgeClass + '">' + section.title[currentLang] + '</span></div>';
+        html += '<ol class="space-y-4 text-sm">';
+        
+        section.questions.forEach((q) => {
+            html += '<li class="border-r-4 border-amber-400 pr-4 py-2" id="q-' + globalIdx + '">';
+            html += '<strong class="text-amber-700">' + (globalIdx + 1) + '.</strong> ' + q.q[currentLang] + '<br>';
+            if (q.svg) html += '<div class="graph-container">' + q.svg + '</div>';
+            
+            q.options.forEach((opt, oIdx) => {
+                html += '<label class="cursor-pointer block mt-2 mr-4 hover:bg-amber-50 rounded-lg p-2 transition">';
+                html += '<input type="radio" name="q' + globalIdx + '" value="' + String.fromCharCode(97 + oIdx) + '" class="mr-2 ml-2">';
+                html += '<span class="arabic-math">' + lbl.option[oIdx] + ') ' + opt[currentLang] + '</span>';
+                html += '</label>';
+            });
+            
+            html += '<div class="answer-box text-green-700 mt-3 font-medium ' + (answersVisible ? '' : 'hidden') + ' bg-green-50 rounded-lg p-3 border border-green-200">';
+            html += lbl.answer + ' ' + lbl.option[q.correct] + ') <span class="arabic-math">' + q.options[q.correct][currentLang] + '</span><br>';
+            html += '<span class="text-sm text-green-700 mt-2 block arabic-math">' + q.answer[currentLang] + '</span>';
+            html += '</div></li>';
+            globalIdx++;
+        });
+        
+        html += '</ol></section>';
+    });
+    
+    container.innerHTML = html;
+}
+
+function startTimer() {
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+        if (timeRemaining % 60 === 0) saveState(false);
+        if (timeRemaining <= 600) document.getElementById('timer').classList.add('timer-warning');
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            alert(currentLang === 'ar' ? "⏰ انتهى الوقت!" : "⏰ Time's up!");
+            gradeExam();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const m = Math.floor(timeRemaining / 60);
+    const s = timeRemaining % 60;
+    document.getElementById('timer').textContent = m.toString().padStart(2,'0') + ':' + s.toString().padStart(2,'0');
+}
+
+function toggleAnswers() {
+    answersVisible = !answersVisible;
+    document.querySelectorAll('.answer-box').forEach(el => el.classList.toggle('hidden', !answersVisible));
+    saveState(false);
+}
+
+function gradeExam() {
+    let correctCount = 0;
+    const sectionScores = new Array(TOTAL_SECTIONS).fill(0);
+    
+    for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        const sel = document.querySelector('input[name="q'+i+'"]:checked');
+        const li = document.getElementById('q-' + i);
+        if (li) {
+            const isCorrect = sel && sel.value === correctAnswersMap[i];
+            if (isCorrect) {
+                correctCount++;
+                li.classList.add('correct');
+                li.classList.remove('incorrect');
+                sectionScores[Math.floor(i / QUESTIONS_PER_SECTION)]++;
+            } else {
+                li.classList.add('incorrect');
+                li.classList.remove('correct');
+            }
+        }
+    }
+    
+    const score = Math.round((correctCount / TOTAL_QUESTIONS) * 100);
+    document.getElementById('res-total').textContent = score + ' / 100';
+    document.getElementById('res-name').textContent = document.getElementById('studentName').value || (currentLang === 'ar' ? 'بطل' : 'Champion');
+    document.getElementById('res-date').textContent = new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-AE' : 'en-US');
+    
+    const pc = document.getElementById('sections-performance');
+    pc.innerHTML = '';
+    examData.sections.forEach((s, idx) => {
+        pc.innerHTML += '<div class="flex justify-between items-center p-3 bg-white rounded-lg"><span class="text-gray-700">' + s.title[currentLang] + '</span><span class="font-bold text-amber-700">' + sectionScores[idx] + '/' + QUESTIONS_PER_SECTION + '</span></div>';
+    });
+    
+    const badge = document.getElementById('success-badge');
+    document.getElementById('success-percent').textContent = score + '%';
+    
+    if (currentLang === 'ar') {
+        if (score >= 90) { badge.textContent = '🌟 ممتاز جداً!'; badge.className = 'success-badge grade-excellent'; }
+        else if (score >= 75) { badge.textContent = '👏 ممتاز!'; badge.className = 'success-badge grade-good'; }
+        else if (score >= 50) { badge.textContent = '👍 جيد'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = '💪 حاول مرة أخرى'; badge.className = 'success-badge grade-fail'; }
+    } else {
+        if (score >= 90) { badge.textContent = '🌟 Outstanding!'; badge.className = 'success-badge grade-excellent'; }
+        else if (score >= 75) { badge.textContent = '👏 Excellent!'; badge.className = 'success-badge grade-good'; }
+        else if (score >= 50) { badge.textContent = '👍 Good'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = '💪 Try Again'; badge.className = 'success-badge grade-fail'; }
+    }
+    
+    document.getElementById('results-panel').classList.remove('hidden');
+    document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth' });
+    if (timerInterval) clearInterval(timerInterval);
+}
+
+function sendResultsToEmail() {
+    const btn = document.getElementById('sendEmailBtn');
+    const status = document.getElementById('emailStatus');
+    btn.disabled = true;
+    btn.textContent = currentLang === 'ar' ? '⏳ جاري الإرسال...' : '⏳ Sending...';
+    
+    const name = document.getElementById('studentName').value || 'غير محدد';
+    const studentClass = document.getElementById('studentClass').value || 'غير محدد';
+    const date = document.getElementById('examDate').value || new Date().toLocaleDateString();
+    const score = document.getElementById('res-total').textContent;
+    const successRate = document.getElementById('success-percent').textContent;
+    const badge = document.getElementById('success-badge').textContent;
+    
+    let questionsHTML = '<div style="font-family:Arial; direction:rtl;">';
+    questionsHTML += '<h2>📐 ' + (currentLang === 'ar' ? 'نتيجة امتحان الاشتقاق الضمني' : 'Implicit Differentiation Exam Result') + '</h2>';
+    questionsHTML += '<p><strong>' + (currentLang === 'ar' ? 'الاسم' : 'Name') + ':</strong> ' + name + '</p>';
+    questionsHTML += '<p><strong>' + (currentLang === 'ar' ? 'الشعبة' : 'Class') + ':</strong> ' + studentClass + '</p>';
+    questionsHTML += '<p><strong>' + (currentLang === 'ar' ? 'التاريخ' : 'Date') + ':</strong> ' + date + '</p>';
+    questionsHTML += '<p><strong>' + (currentLang === 'ar' ? 'الدرجة' : 'Score') + ':</strong> ' + score + ' (' + successRate + '%)</p>';
+    questionsHTML += '<p><strong>' + (currentLang === 'ar' ? 'التقدير' : 'Grade') + ':</strong> ' + badge + '</p>';
+    questionsHTML += '<hr><h3>' + (currentLang === 'ar' ? 'تفاصيل الإجابات:' : 'Answer Details:') + '</h3><table style="width:100%; border-collapse:collapse;">';
+    questionsHTML += '<tr style="background:#d97706; color:white;"><th style="padding:8px; border:1px solid #ddd;">#</th><th style="padding:8px; border:1px solid #ddd;">' + (currentLang === 'ar' ? 'السؤال' : 'Question') + '</th><th style="padding:8px; border:1px solid #ddd;">' + (currentLang === 'ar' ? 'إجابة الطالب' : 'Student Answer') + '</th><th style="padding:8px; border:1px solid #ddd;">' + (currentLang === 'ar' ? 'الصحيحة' : 'Correct') + '</th><th style="padding:8px; border:1px solid #ddd;">' + (currentLang === 'ar' ? 'النتيجة' : 'Result') + '</th></tr>';
+    
+    let globalIdx = 0;
+    examData.sections.forEach((section) => {
+        questionsHTML += '<tr style="background:#fef3c7;"><td colspan="5" style="padding:8px; font-weight:bold; border:1px solid #ddd;">' + section.title.ar + '</td></tr>';
+        section.questions.forEach((q) => {
+            const sel = document.querySelector('input[name="q'+globalIdx+'"]:checked');
+            const sv = sel ? sel.value : null;
+            const cv = correctAnswersMap[globalIdx];
+            const ic = sv === cv;
+            let sat = currentLang === 'ar' ? '❌ لم يجب' : '❌ No answer';
+            let sac = '#dc2626';
+            if (sv) {
+                const si = sv.charCodeAt(0) - 97;
+                sat = q.options[si][currentLang];
+                sac = ic ? '#16a34a' : '#dc2626';
+            }
+            const cat = q.options[q.correct][currentLang];
+            const rb = ic ? '#f0fdf4' : '#fef2f2';
+            questionsHTML += '<tr style="background:' + rb + ';"><td style="padding:8px; border:1px solid #ddd; text-align:center;">' + (globalIdx+1) + '</td><td style="padding:8px; border:1px solid #ddd;">' + q.q.ar.replace(/<[^>]+>/g, '') + '</td><td style="padding:8px; border:1px solid #ddd; color:' + sac + ';">' + sat + '</td><td style="padding:8px; border:1px solid #ddd; color:#16a34a;">' + cat + '</td><td style="padding:8px; border:1px solid #ddd; text-align:center;">' + (ic?'✅':'❌') + '</td></tr>';
+            globalIdx++;
+        });
+    });
+    questionsHTML += '</table></div>';
+    
+    const templateParams = {
+        to_email: TARGET_EMAIL,
+        student_name: name,
+        student_class: studentClass,
+        exam_date: date,
+        total_score: score,
+        success_rate: successRate,
+        grade: badge,
+        answers_table: questionsHTML
+    };
+    
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
+        .then(() => {
+            status.textContent = currentLang === 'ar' ? '✅ تم الإرسال بنجاح!' : '✅ Sent successfully!';
+            status.style.color = '#16a34a';
+            btn.textContent = currentLang === 'ar' ? '✓ تم' : '✓ Sent';
+            alert(currentLang === 'ar' ? 'تم إرسال النتيجة للمعلم بنجاح!' : 'Result sent to teacher successfully!');
+        })
+        .catch((error) => {
+            status.textContent = currentLang === 'ar' ? '❌ فشل الإرسال' : '❌ Failed to send';
+            status.style.color = '#dc2626';
+            btn.disabled = false;
+            btn.textContent = currentLang === 'ar' ? '📧 حاول مرة أخرى' : '📧 Try Again';
+            alert(currentLang === 'ar' ? 'فشل الإرسال: ' + error.text : 'Failed: ' + error.text);
+        });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const saved = loadState();
+    if (saved && saved.seed) {
+        currentSeed = saved.seed;
+        currentLang = saved.lang || 'ar';
+        timeRemaining = saved.timeRemaining !== undefined ? saved.timeRemaining : TOTAL_TIME;
+        answersVisible = saved.answersVisible || false;
+        document.getElementById('btn-ar').classList.toggle('active', currentLang === 'ar');
+        document.getElementById('btn-en').classList.toggle('active', currentLang === 'en');
+        document.body.classList.toggle('en-mode', currentLang === 'en');
+    } else {
+        currentSeed = Date.now();
+    }
+    prepareShuffledExam();
+    renderExam();
+    if (saved) {
+        if (saved.studentName) document.getElementById('studentName').value = saved.studentName;
+        if (saved.studentClass) document.getElementById('studentClass').value = saved.studentClass;
+        if (saved.examDate) document.getElementById('examDate').value = saved.examDate;
+        if (saved.answers) restoreAnswers(saved.answers);
+    }
+    setupAnswerListeners();
+    setupInputListeners();
+    startTimer();
+});
+window.addEventListener('beforeunload', () => saveState(false));
+</script>
+</body>
+</html>
